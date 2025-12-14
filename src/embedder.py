@@ -19,28 +19,11 @@ class EmailEmbedder:
         print(f"Model loaded (dim: {self.model.get_sentence_embedding_dimension()})")
 
     def embed_text(self, text: str) -> np.ndarray:
-        """
-        Generate embedding for a single text.
-
-        Args:
-            text: Text to embed
-
-        Returns:
-            Embedding vector as numpy array
-        """
+        """Generate embedding for a single text."""
         return self.model.encode(text, convert_to_numpy=True)
 
     def embed_batch(self, texts: List[str], batch_size: int = None) -> np.ndarray:
-        """
-        Generate embeddings for a batch of texts.
-
-        Args:
-            texts: List of texts to embed
-            batch_size: Batch size for processing
-
-        Returns:
-            Array of embeddings (n_texts, embedding_dim)
-        """
+        """Generate embeddings for a batch of texts."""
         batch_size = batch_size or 32  # Reduce from config.BATCH_SIZE to 32 for stability
 
         print(f"Generating embeddings for {len(texts)} texts...")
@@ -60,17 +43,7 @@ class EmailEmbedder:
         return embeddings
 
     def embed_emails(self, emails_df: pd.DataFrame) -> np.ndarray:
-        """
-        Generate embeddings for all emails in a DataFrame.
-
-        Uses subject + body for embedding (concatenated).
-
-        Args:
-            emails_df: DataFrame with 'subject' and 'body' columns
-
-        Returns:
-            Array of embeddings
-        """
+        """Generate embeddings for all emails in a DataFrame."""
         print("\nPreparing email texts for embedding...")
 
         # Combine subject and body for richer embeddings
@@ -96,27 +69,13 @@ class EmailEmbedder:
         return embeddings
 
     def save_embeddings(self, embeddings: np.ndarray, output_path: str):
-        """
-        Save embeddings to disk.
-
-        Args:
-            embeddings: Array of embeddings
-            output_path: Path to save embeddings (.npy file)
-        """
+        """Save embeddings to disk."""
         np.save(output_path, embeddings)
         print(f"✓ Embeddings saved to: {output_path}")
         print(f"  File size: {Path(output_path).stat().st_size / 1024 / 1024:.1f} MB")
 
     def load_embeddings(self, input_path: str) -> np.ndarray:
-        """
-        Load embeddings from disk.
-
-        Args:
-            input_path: Path to embeddings file (.npy)
-
-        Returns:
-            Array of embeddings
-        """
+        """Load embeddings from disk."""
         embeddings = np.load(input_path)
         print(f"✓ Loaded embeddings from: {input_path}")
         print(f"  Shape: {embeddings.shape}")

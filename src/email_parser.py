@@ -163,20 +163,7 @@ def parse_date(date_str):
 
 
 def extract_body(msg) -> str:
-    """
-    Extract clean body text from email message.
-
-    Handles:
-    - Multipart messages (prefer text/plain over text/html)
-    - HTML stripping
-    - Forwarding chains (extract first message)
-
-    Args:
-        msg: Parsed email message object
-
-    Returns:
-        Clean body text
-    """
+    """Extract clean body text from email message."""
     body = ""
 
     # Handle multipart messages
@@ -256,16 +243,8 @@ def clean_body(body):
 
 
 def parse_email_with_regex(email_text: str) -> Dict[str, str]:
-    """
-    Fallback parser using regex when email.parser fails.
-    Handles both standard email headers and Enron format.
-
-    Args:
-        email_text: Raw email text
-
-    Returns:
-        Dictionary with parsed fields
-    """
+    """Fallback parser using regex when email.parser fails.
+    Handles both standard email headers and Enron format."""
     result = {
         'subject': '',
         'from': '',
@@ -359,15 +338,7 @@ def parse_emails_batch(df):
 
 
 def extract_date_features(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Extract year and month from parsed dates for faceting.
-
-    Args:
-        df: DataFrame with 'date' column
-
-    Returns:
-        DataFrame with additional columns: date_year, date_month
-    """
+    """Extract year and month from parsed dates for faceting."""
     print("\nExtracting date features for faceting...")
 
     # Parse dates

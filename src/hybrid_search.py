@@ -13,8 +13,12 @@ class HybridSearchEngine:
         self.embeddings = embeddings
         self.metadata = metadata
         
-        # Pre-compute lowercase body text for exact matching
-        self.body_lower = emails_df['body'].fillna('').astype(str).str.lower()
+        # Pre-compute lowercase text for exact matching; prefer full_text when present
+        preferred_text = emails_df['full_text'].fillna('')
+        fallback_text = emails_df['body'].fillna('')
+        combined = preferred_text.astype(str)
+        combined = combined.where(combined.str.len() > 0, fallback_text.astype(str))
+        self.body_lower = combined.str.lower()
         self.subject_lower = emails_df['subject'].fillna('').astype(str).str.lower()
 
         print("Building BM25 keyword index...")
@@ -26,8 +30,11 @@ class HybridSearchEngine:
         corpus = []
         for _, row in self.emails_df.iterrows():
             subject = str(row.get('subject', ''))
+            # Prefer full_text for BM25; fallback to body
+            full_text = str(row.get('full_text', ''))
             body = str(row.get('body', ''))
-            text = f"{subject} {body}"
+            content = full_text if len(full_text) > 0 else body
+            text = f"{subject} {content}"
             tokens = self._tokenize(text)
             corpus.append(tokens)
 
@@ -133,6 +140,11 @@ class HybridSearchEngine:
                 continue
 
             email = self.emails_df.iloc[idx]
+            # Prefer full_text when available; fallback to body
+            full_text = str(email.get('full_text', ''))
+            body = str(email.get('body', ''))
+            content = full_text if len(full_text) > 0 else body
+
             results.append({
                 'path': email['path'],
                 'user': email['user'],
@@ -141,7 +153,7 @@ class HybridSearchEngine:
                 'from': email.get('from', ''),
                 'to': email.get('to', ''),
                 'date': email.get('date', ''),
-                'body': email.get('body', ''),
+                'body': content,
                 'score': float(hybrid_scores[idx]),
                 'semantic_score': float(semantic_scores[idx]),
                 'bm25_score': float(bm25_scores[idx])

@@ -53,25 +53,21 @@ def main():
 def render_unified_search(search_engine, rag):
     facets = search_engine.get_facet_values()
 
-    # Example queries from evaluation dataset (user-provided)
+    # Example queries from evaluation dataset
     st.markdown("**Try these real questions from the dataset:**")
-    ex1, ex2, ex3, ex4 = st.columns(4)
+    example_col1, example_col2, example_col3 = st.columns(3)
 
-    with ex1:
-        if st.button("Arvind Ramanathan phones"):
-            st.session_state['search_query'] = "What are Arvind Ramanathan's phone numbers, according to his email to Andy Zipper?"
-
-    with ex2:
-        if st.button("Enron Updates - credit rating"):
+    with example_col1:
+        if st.button("Enron Europe credit rating"):
             st.session_state['search_query'] = "What event occurred yesterday, according to the email with the subject \"Enron Updates\", that impacted Enron Europe's ability to trade, specifically in relation to Enron Europe's credit rating downgrade?"
 
-    with ex3:
-        if st.button("Sandra Brawner - colleague"):
-            st.session_state['search_query'] = "Why did Sandra Brawner's colleague not come to work, according to her email to Susan Schnitzer?"
+    with example_col2:
+        if st.button("Long-term BPA deals"):
+            st.session_state['search_query'] = "What was the timeframe of the long-term deals that were done with BPA, according to Tim Belden's email about communicating with the risk team?"
 
-    with ex4:
-        if st.button("Lindy Donoho - Amendment tendered"):
-            st.session_state['search_query'] = "According to Lindy Donoho's email sent on Thursday, October 25, 2001 9:41 AM, with the subject \"Installation of Pigging Facilities\" and referencing the La Plata Facilities O&O Agreement, who tendered the Amendment that incorporates the 4/1/98 expansion of the facilities to NWPL for the first time, and who tendered it to them twice after that?"
+    with example_col3:
+        if st.button("Theresa Zucha article"):
+            st.session_state['search_query'] = "According to the humorous article forwarded by Theresa Zucha, what is the predicted reaction of the Taliban to menopausal women crawling over their terrain?"
 
     st.markdown("---")
 

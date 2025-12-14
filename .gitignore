@@ -21,6 +21,9 @@ src/evaluator.py
 # Lecture materials (don't commit)
 Info202lectures/
 PROJECT_WRITEUP.md
+AI_USAGE_APPENDIX.md
+PROJECT_WRITEUP.docx
+AI_USAGE_APPENDIX.docx
 
 # Environment variables & Secrets (CRITICAL - never commit these)
 .env

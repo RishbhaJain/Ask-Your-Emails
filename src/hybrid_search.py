@@ -20,6 +20,7 @@ class HybridSearchEngine:
         combined = combined.where(combined.str.len() > 0, fallback_text.astype(str))
         self.body_lower = combined.str.lower()
         self.subject_lower = emails_df['subject'].fillna('').astype(str).str.lower()
+        self.from_lower = emails_df['from'].fillna('').astype(str).str.lower()
 
         print("Building BM25 keyword index...")
         self._build_bm25_index()
@@ -100,6 +101,7 @@ class HybridSearchEngine:
         # Extract key terms for exact matching
         key_terms = self._extract_key_terms(query)
         exact_match_boost = np.zeros(len(self.emails_df))
+        subject_from_boost = np.zeros(len(self.emails_df))
         
         if key_terms:
             for term in key_terms:
@@ -107,12 +109,18 @@ class HybridSearchEngine:
                 matches = (self.body_lower.str.contains(re.escape(term), regex=True, na=False) | 
                           self.subject_lower.str.contains(re.escape(term), regex=True, na=False))
                 exact_match_boost += matches.values * 0.2  # 0.2 boost per matched term
+
+                # Light bonus when term appears in subject or sender
+                subj_match = self.subject_lower.str.contains(re.escape(term), regex=True, na=False)
+                from_match = self.from_lower.str.contains(re.escape(term), regex=True, na=False)
+                subject_from_boost += (subj_match.values | from_match.values) * 0.1
         
         # combine with exact match boost
         hybrid_scores = (
             semantic_weight * semantic_scores_norm +
             bm25_weight * bm25_scores_norm +
-            exact_match_boost
+            exact_match_boost +
+            subject_from_boost
         )
 
         # apply filters

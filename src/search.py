@@ -49,7 +49,7 @@ class EmailSearchEngine:
     def search(
         self,
         query: str,
-        top_k: int = 10,
+        top_k: int = 25,
         users: Optional[List[str]] = None,
         folders: Optional[List[str]] = None,
         date_year_min: Optional[int] = None,

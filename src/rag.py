@@ -45,11 +45,11 @@ class EmailRAG:
             sender = email.get('from', 'Unknown')
             body = email.get('body', '')
 
-            # give more context to top results
+            # Give more context to top results; include both head and tail so endings aren't lost
             if i <= 3:
-                body_preview = body[:1500]
+                body_preview = self._preview_text(body, 3200)
             else:
-                body_preview = body[:800]
+                body_preview = self._preview_text(body, 2200)
 
             formatted.append(
                 f"[Email {i}]\n"
@@ -60,12 +60,29 @@ class EmailRAG:
 
         return "\n---\n".join(formatted)
 
+    def _preview_text(self, body: str, max_chars: int) -> str:
+        """Return a head+tail preview to capture endings of long emails."""
+        if not body:
+            return ""
+
+        if len(body) <= max_chars:
+            return body
+
+        head_len = max_chars // 2
+        tail_len = max_chars - head_len - len("\n...[trimmed]...\n")
+        return body[:head_len] + "\n...[trimmed]...\n" + body[-tail_len:]
+
     def _build_prompt(self, question: str, context: str) -> str:
-        return f"""You are analyzing emails from the Enron dataset to answer questions.
+        return f'''You are extracting a precise answer from the provided emails.
 
-Context emails:
-{context}
+    Read the emails carefully. If you find the answer, quote the relevant phrase and then give a concise final answer. Focus on names, dates, who did what, and any explicit statements.
 
-Question: {question}
+    Context emails:
+    {context}
 
-Provide a clear, concise answer based only on the emails above. If the emails don't contain enough information, say so. Include specific details from the emails when relevant."""
+    Question: {question}
+
+    Instructions:
+    - If the answer is stated, respond with: "Answer: <concise answer>" and optionally one short supporting quote.
+    - If multiple names/actors are mentioned, pick the one explicitly tied to the action in the question.
+    - If not found in the context, say: "Answer: Not found in provided emails."'''

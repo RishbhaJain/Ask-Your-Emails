@@ -40,11 +40,6 @@ class EmailVectorIndex:
         self.metadata['date_year'] = self.metadata['date_year'].fillna(2000).astype(int)
         self.metadata['date_month'] = self.metadata['date_month'].fillna(1).astype(int)
 
-        print(f"✓ Index built successfully")
-        print(f"  Indexed emails: {len(self.metadata)}")
-        print(f"  Embedding dimension: {self.embeddings.shape[1]}")
-        print(f"  Metadata columns: {list(self.metadata.columns)}")
-
     def _extract_folder(self, path: str) -> str:
         """Extract folder name from email path."""
         parts = path.split('/')
@@ -140,35 +135,20 @@ class EmailVectorIndex:
         # Load emails_df if available (for backward compatibility with old indexes)
         self.emails_df = index_data.get('emails_df', self.metadata.copy())
 
-        print(f"✓ Index loaded successfully")
-        print(f"  Indexed emails: {len(self.metadata)}")
-        print(f"  Embedding dimension: {self.embeddings.shape[1]}")
-
     def get_facet_values(self) -> Dict:
-        """
-        Get unique values for each facet (for UI dropdowns).
-
-        Returns:
-            Dict with facet names and their unique values
-        """
+        """Get unique values for each facet (for UI dropdowns)."""
         return {
+            'from': sorted(self.metadata['from'].dropna().unique().tolist()),
+            'to': sorted(self.metadata['to'].dropna().unique().tolist()),
+            'years': sorted(self.metadata['date_year'].unique().tolist()),
+            # Keep for backward compatibility
             'users': sorted(self.metadata['user'].unique().tolist()),
-            'folders': sorted(self.metadata['folder'].unique().tolist()),
-            'years': sorted(self.metadata['date_year'].unique().tolist())
+            'folders': sorted(self.metadata['folder'].unique().tolist())
         }
 
     def test_search(self, query_text: str, embedder, top_k: int = 5):
-        """
-        Test search with a text query.
+        """ Test search with a text query."""
 
-        Args:
-            query_text: Text query
-            embedder: EmailEmbedder instance
-            top_k: Number of results
-
-        Returns:
-            List of results
-        """
         print(f"\nTest search: '{query_text}'")
         print("-" * 60)
 

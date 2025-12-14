@@ -39,8 +39,32 @@ def load_rag():
         return None
 
 
+def get_filtered_results(results, selected_from, selected_to, selected_years):
+    """Apply all filters to results"""
+    filtered = results
+    
+    if selected_from:
+        filtered = [r for r in filtered if r['from'] in selected_from]
+    if selected_to:
+        filtered = [r for r in filtered if r['to'] in selected_to]
+    if selected_years:
+        filtered = [r for r in filtered if r.get('date') and int(r['date'].split('-')[0]) in selected_years]
+    
+    return filtered
+
+
+def clear_all():
+    """Callback to clear all session state"""
+    st.session_state['last_results'] = None
+    st.session_state['search_executed'] = False
+    st.session_state['search_query'] = ''
+    st.session_state['from_filter'] = []
+    st.session_state['to_filter'] = []
+    st.session_state['year_filter'] = []
+
+
 def main():
-    st.title("📧 Ask Your Emails")
+    st.title("Ask Your Emails")
     st.caption("Semantic email search over 14,929 Enron emails")
 
     with st.spinner("Loading..."):
@@ -51,6 +75,12 @@ def main():
 
 
 def render_unified_search(search_engine, rag):
+    # Initialize session state
+    if 'last_results' not in st.session_state:
+        st.session_state['last_results'] = None
+    if 'search_executed' not in st.session_state:
+        st.session_state['search_executed'] = False
+    
     facets = search_engine.get_facet_values()
 
     # Example queries from evaluation dataset
@@ -58,16 +88,16 @@ def render_unified_search(search_engine, rag):
     example_col1, example_col2, example_col3 = st.columns(3)
 
     with example_col1:
-        if st.button("Enron Europe credit rating"):
-            st.session_state['search_query'] = "What event occurred yesterday, according to the email with the subject \"Enron Updates\", that impacted Enron Europe's ability to trade, specifically in relation to Enron Europe's credit rating downgrade?"
+        if st.button("Taliban vs. Texans"):
+            st.session_state['search_query'] = "In the 'Taliban vs. Texans' joke email, how many Texans are claimed to be better than one thousand Taliban?"
 
     with example_col2:
-        if st.button("Long-term BPA deals"):
-            st.session_state['search_query'] = "What was the timeframe of the long-term deals that were done with BPA, according to Tim Belden's email about communicating with the risk team?"
+        if st.button("Pigging amendment"):
+            st.session_state['search_query'] = "In Lindy Donoho's October 25, 2001 email about 'Installation of Pigging Facilities,' who tendered the amendment first and who tendered it twice after?"
 
     with example_col3:
-        if st.button("Theresa Zucha article"):
-            st.session_state['search_query'] = "According to the humorous article forwarded by Theresa Zucha, what is the predicted reaction of the Taliban to menopausal women crawling over their terrain?"
+        if st.button("NWPL ownership"):
+            st.session_state['search_query'] = "In that same Lindy Donoho pigging email, what will NWPL's ownership interest be if they execute the amendment?"
 
     st.markdown("---")
 
@@ -79,45 +109,107 @@ def render_unified_search(search_engine, rag):
         height=100
     )
 
+    st.markdown("---")
+
     # Filters and options
-    col1, col2, col3 = st.columns([2, 2, 2])
+    col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
 
     with col1:
-        selected_users = st.multiselect("Filter by Users", facets['users'], key="search_users")
-
-    with col2:
-        selected_folders = st.multiselect("Filter by Folders", facets['folders'], key="search_folders")
-
-    with col3:
         top_k = st.number_input("Results", min_value=5, max_value=50, value=10, step=5)
 
-        if rag:
-            use_qa = st.checkbox("Generate AI answer", value=False, help="Use RAG to generate a comprehensive answer")
-            if use_qa:
-                num_context = st.number_input(
-                    "Context emails",
-                    min_value=1,
-                    max_value=10,
-                    value=config.MAX_CONTEXT_EMAILS,
-                    key="num_context"
-                )
+    # Get all available options from facets (static, not updated)
+    all_from = sorted(facets.get('from', []))
+    all_to = sorted(facets.get('to', []))
+    all_years = sorted(facets.get('years', []))
 
-    query = st.session_state.get('search_query', '')
+    with col2:
+        selected_from = st.multiselect(
+            "From",
+            all_from,
+            key="from_filter",
+            help="Filter by sender"
+        )
 
-    if query:
-        with st.spinner("Searching..."):
-            results = search_engine.search(
-                query=query,
-                top_k=top_k,
-                users=selected_users if selected_users else None,
-                folders=selected_folders if selected_folders else None
+    with col3:
+        selected_to = st.multiselect(
+            "To",
+            all_to,
+            key="to_filter",
+            help="Filter by recipient"
+        )
+
+    with col4:
+        selected_years = st.multiselect(
+            "Year",
+            all_years,
+            key="year_filter",
+            help="Filter by year"
+        )
+
+    st.markdown("---")
+
+    # RAG options
+    use_qa = False
+    num_context = config.MAX_CONTEXT_EMAILS
+    if rag:
+        use_qa = st.checkbox("Generate AI answer", value=False, help="Use RAG to generate a comprehensive answer")
+        if use_qa:
+            num_context = st.number_input(
+                "Context emails",
+                min_value=1,
+                max_value=10,
+                value=config.MAX_CONTEXT_EMAILS,
+                key="num_context"
             )
+
+    st.markdown("---")
+
+    # Button row
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        search_clicked = st.button("Search", type="primary", use_container_width=True)
+
+    with col2:
+        st.button("Clear", use_container_width=True, on_click=clear_all)
+
+    st.markdown("---")
+
+    # Handle search button
+    if search_clicked:
+        query = st.session_state.get('search_query', '').strip()
+        
+        if not query:
+            st.warning("Please enter a search query.")
+        else:
+            with st.spinner("Searching..."):
+                results = search_engine.search(
+                    query=query,
+                    top_k=top_k,
+                    users=None,
+                    date_year_min=None,
+                    date_year_max=None
+                )
+            
+            # Apply filters to search results
+            filtered_results = get_filtered_results(results, selected_from, selected_to, selected_years)
+            
+            st.session_state['last_results'] = filtered_results
+            st.session_state['search_executed'] = True
+
+    # Display results if search was executed
+    if st.session_state['search_executed'] and st.session_state['last_results'] is not None:
+        results = st.session_state['last_results']
 
         if results:
             # Generate AI answer if requested
-            if rag and 'use_qa' in locals() and use_qa:
+            if rag and use_qa:
                 with st.spinner("Generating answer..."):
-                    response = rag.answer_question(query, results, max_emails=num_context)
+                    response = rag.answer_question(
+                        st.session_state.get('search_query', ''),
+                        results,
+                        max_emails=num_context
+                    )
 
                     st.markdown("### AI Answer")
                     st.markdown(response['answer'])
@@ -129,15 +221,16 @@ def render_unified_search(search_engine, rag):
             # Show search results
             st.success(f"Found {len(results)} results")
 
-            for result in results:
-                with st.expander(f"{result['rank']}. {result['subject']} (score: {result['score']:.2f})"):
+            for i, result in enumerate(results, 1):
+                with st.expander(f"{i}. {result['subject']} (score: {result['score']:.2f})"):
                     st.markdown(f"**From:** {result['from']}")
                     st.markdown(f"**To:** {result['to']}")
-                    st.markdown(f"**Folder:** {result['folder']}")
+                    st.markdown(f"**Date:** {result.get('date', 'N/A')}")
+                    st.markdown(f"**Path:** `{result['path']}`")
                     st.markdown("---")
                     st.text(result['body'])
         else:
-            st.warning("No results found.")
+            st.warning("No results match your search and filters.")
 
 
 if __name__ == "__main__":

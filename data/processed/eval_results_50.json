@@ -1,0 +1,25 @@
+{
+  "retrieval": {
+    "recall@10": 0.58,
+    "precision@1": 0.44,
+    "mrr": 0.48766666666666664,
+    "samples": 50
+  },
+  "answer_quality": {
+    "exact_match_rate": 0.02,
+    "key_term_match_rate": 0.48,
+    "retrieval_failure_rate": 0.42,
+    "samples": 50
+  },
+  "combined": {
+    "end_to_end_accuracy": 0.034482758620689655,
+    "overall_accuracy": 0.02,
+    "coverage": 0.58,
+    "answer_quality": 0.48
+  },
+  "config": {
+    "n_samples": 50,
+    "top_k": 10,
+    "rate_limit_delay": 2.0
+  }
+}

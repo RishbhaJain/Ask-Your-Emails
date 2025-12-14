@@ -53,21 +53,21 @@ def main():
 def render_unified_search(search_engine, rag):
     facets = search_engine.get_facet_values()
 
-    # Example queries
-    st.markdown("**Try these examples:**")
+    # Example queries from evaluation dataset
+    st.markdown("**Try these real questions from the dataset:**")
     example_col1, example_col2, example_col3 = st.columns(3)
 
     with example_col1:
-        if st.button("California energy crisis"):
-            st.session_state['search_query'] = "California energy crisis"
+        if st.button("Enron Europe credit rating"):
+            st.session_state['search_query'] = "What event occurred yesterday, according to the email with the subject \"Enron Updates\", that impacted Enron Europe's ability to trade, specifically in relation to Enron Europe's credit rating downgrade?"
 
     with example_col2:
-        if st.button("What were the main trading strategies?"):
-            st.session_state['search_query'] = "What were the main trading strategies?"
+        if st.button("Long-term BPA deals"):
+            st.session_state['search_query'] = "What was the timeframe of the long-term deals that were done with BPA, according to Tim Belden's email about communicating with the risk team?"
 
     with example_col3:
-        if st.button("Meeting schedules and appointments"):
-            st.session_state['search_query'] = "Meeting schedules and appointments"
+        if st.button("Theresa Zucha article"):
+            st.session_state['search_query'] = "According to the humorous article forwarded by Theresa Zucha, what is the predicted reaction of the Taliban to menopausal women crawling over their terrain?"
 
     st.markdown("---")
 

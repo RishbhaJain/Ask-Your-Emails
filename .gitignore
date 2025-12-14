@@ -8,10 +8,22 @@ env/
 venv/
 ENV/
 .venv
+check_eval_coverage.py
+deep_dive_analysis.py
+eval_rag_50.py
+test_rag.py
+test_search.py
+src/evaluator.py
 
-# Environment variables
+# Environment variables & Secrets (CRITICAL - never commit these)
 .env
+.env.local
+.env.*.local
 .streamlit/secrets.toml
+secrets.toml
+*.pem
+*.key
+.aws/
 
 # Data files (too large for git)
 data/raw/

@@ -23,4 +23,10 @@ BATCH_SIZE = 100
 
 COLLECTION_NAME = "enron_emails"
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "REDACTED")
+# API key must be provided via environment variable or Streamlit secrets
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+if not ANTHROPIC_API_KEY:
+    raise ValueError(
+        "ANTHROPIC_API_KEY not found. "
+        "Please set it in your .env file or Streamlit secrets.toml"
+    )

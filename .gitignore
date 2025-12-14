@@ -8,12 +8,18 @@ env/
 venv/
 ENV/
 .venv
+
+# Development and testing scripts (don't commit)
 check_eval_coverage.py
 deep_dive_analysis.py
 eval_rag_50.py
+eval_qa_50.csv
 test_rag.py
 test_search.py
 src/evaluator.py
+
+# Lecture materials (don't commit)
+Info202lectures/
 
 # Environment variables & Secrets (CRITICAL - never commit these)
 .env

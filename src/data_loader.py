@@ -16,7 +16,7 @@ def load_enron_dataset(split="train"):
 
 def extract_qa_pairs_from_full_dataset(full_df, target_pairs=500):
     """Extract Q&A pairs from the full dataset, stratified by user"""
-    print(f"\nExtracting Q&A pairs from full dataset...")
+    print(f"\nExtracting Q&A pairs from full dataset")
 
     qa_pairs = []
 
@@ -63,7 +63,7 @@ def extract_qa_pairs_from_full_dataset(full_df, target_pairs=500):
 
 def create_smart_subset(full_df, qa_df, target_size=15000):
     """Create subset that INCLUDES all QA-relevant emails, then fills remainder with random sampling"""
-    print(f"\nCreating smart subset with Q&A coverage...")
+    print(f"\nCreating smart subset with Q&A coverage ")
 
     # Step 1: Get all emails that have Q&A pairs
     qa_paths = set(qa_df['path'].unique())
@@ -76,7 +76,7 @@ def create_smart_subset(full_df, qa_df, target_size=15000):
     remaining_needed = max(0, target_size - len(qa_emails))
     
     if remaining_needed > 0 and len(remaining_emails) > 0:
-        print(f"Filling subset with {remaining_needed} random emails...")
+        print(f"Filling subset with {remaining_needed} random emails ")
         # Stratified sampling by user for the remainder
         additional = []
         user_counts = remaining_emails['user'].value_counts()
@@ -124,7 +124,7 @@ def save_processed_data(emails_df, qa_df):
     emails_path = config.PROCESSED_DIR / "emails_subset.parquet"
     qa_path = config.PROCESSED_DIR / "eval_qa_pairs.parquet"
 
-    print(f"\nSaving processed data...")
+    print(f"\nSaving processed data ")
     print(f"  Emails (parquet): {emails_path}")
     print(f"  Q&A pairs (parquet): {qa_path}")
 

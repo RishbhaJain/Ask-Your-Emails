@@ -22,7 +22,7 @@ class HybridSearchEngine:
         self.subject_lower = emails_df['subject'].fillna('').astype(str).str.lower()
         self.from_lower = emails_df['from'].fillna('').astype(str).str.lower()
 
-        print("Building BM25 keyword index...")
+        print("Building BM25 keyword index ")
         self._build_bm25_index()
         print("BM25 index ready")
 

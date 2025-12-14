@@ -33,7 +33,7 @@ def parse_enron_format(email_text):
     if sender_match:
         result['from'] = sender_match.group(1).strip()
 
-    # recipients are in format: ['email1', 'email2', ...]
+    # recipients are in format: ['email1', 'email2',  ]
     recipients_match = re.search(r'Recipients:\s*(\[.+?\])', email_text, re.IGNORECASE | re.DOTALL)
     if recipients_match:
         try:
@@ -302,7 +302,7 @@ def parse_emails_batch(df):
     """Parse email text for all records"""
     from tqdm import tqdm
 
-    print("Parsing email headers and bodies...")
+    print("Parsing email headers and bodies ")
 
     parsed_data = []
 
@@ -339,7 +339,7 @@ def parse_emails_batch(df):
 
 def extract_date_features(df: pd.DataFrame) -> pd.DataFrame:
     """Extract year and month from parsed dates for faceting."""
-    print("\nExtracting date features for faceting...")
+    print("\nExtracting date features for faceting ")
 
     # Parse dates
     df['date_parsed'] = pd.to_datetime(df['date'], errors='coerce')

@@ -13,24 +13,23 @@ from indexer import EmailVectorIndex
 
 
 def main():
-    print("\nBuilding vector index...")
 
     emails_path = config.PROCESSED_DIR / "emails_subset.parquet"
     print(f"Loading emails from {emails_path}")
     emails_df = pd.read_parquet(emails_path)
     print(f"Loaded {len(emails_df)} emails")
 
-    print("\nInitializing embedding model...")
+    print("\nInitializing embedding model")
     embedder = EmailEmbedder()
 
-    print("Generating embeddings (this may take a while)...")
+    print("Generating embeddings")
     embeddings = embedder.embed_emails(emails_df)
 
     embeddings_path = config.PROCESSED_DIR / "email_embeddings.npy"
     print(f"Saving embeddings to {embeddings_path}")
     embedder.save_embeddings(embeddings, str(embeddings_path))
 
-    print("\nBuilding FAISS index...")
+    print("\nBuilding FAISS index")
     index = EmailVectorIndex()
     index.build_index(emails_df, embeddings)
     index.save_index()

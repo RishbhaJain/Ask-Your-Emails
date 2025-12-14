@@ -128,7 +128,7 @@ sequenceDiagram
     Script->>Loader: save_processed_data(enriched_df, qa_df)
     Loader->>Disk: emails_subset.parquet (28 MB)
     Loader->>Disk: eval_qa_pairs.parquet (996 KB)
-    Loader-->>Script: ✓ Saved
+    Loader-->>Script:   Saved
 ```
 
 ### Key Components
@@ -275,7 +275,7 @@ sequenceDiagram
 
     Script->>Embedder: save_embeddings()
     Embedder->>Disk: Save email_embeddings.npy (22 MB)
-    Disk-->>Script: ✓ Saved
+    Disk-->>Script:   Saved
 
     Script->>Indexer: __init__(embeddings, emails_df)
     Script->>Indexer: build_index()
@@ -286,7 +286,7 @@ sequenceDiagram
 
     Script->>Indexer: save_index()
     Indexer->>Disk: Pickle index (vector_index.pkl, 41 MB)
-    Disk-->>Script: ✓ Index saved
+    Disk-->>Script:   Index saved
 ```
 
 ### Key Components
@@ -415,7 +415,7 @@ sequenceDiagram
     Engine->>Model: Load model("all-MiniLM-L6-v2")
     Model-->>Engine: Model ready
     Disk-->>Engine: Index, embeddings, emails loaded
-    Engine-->>UI: ✓ Search engine ready
+    Engine-->>UI:   Search engine ready
 
     User->>UI: Enter query "California energy crisis"
     User->>UI: Select filters (user, folder)
@@ -629,11 +629,11 @@ flowchart TD
     A[Top K Retrieved Emails] --> B{For each email}
 
     B --> C[Format Email]
-    C --> D[Subject: ...]
-    C --> E[From: ...]
-    C --> F[To: ...]
-    C --> G[Date: ...]
-    C --> H[Body: ...]
+    C --> D[Subject:  ]
+    C --> E[From:  ]
+    C --> F[To:  ]
+    C --> G[Date:  ]
+    C --> H[Body:  ]
 
     H --> I{Body > 500 chars?}
     I -->|Yes| J[Truncate to 500 chars]
@@ -683,7 +683,7 @@ Date: {date}
 Body: {body}
 ---
 Email 2:
-...
+ 
 ---
 
 Based on these emails, please answer the question.
@@ -830,7 +830,7 @@ sequenceDiagram
     User->>UI: Enter question
     User->>UI: Click "Get Answer"
 
-    UI->>UI: Show spinner "Searching..."
+    UI->>UI: Show spinner "Searching "
     UI->>RAG: answer_question(question)
 
     RAG->>RAG: Search emails
@@ -922,7 +922,7 @@ Streamlit caching ensures:
 │   [Click to expand body]             │
 │                                      │
 │ ▶ Subject: Meeting Notes (0.72)     │
-│   ...                                │
+│                                    │
 └─────────────────────────────────────┘
 ```
 
@@ -937,7 +937,7 @@ Streamlit caching ensures:
 │                                      │
 │ ─────────────────────────────────   │
 │ ✅ Answer:                          │
-│ The California energy crisis...     │
+│ The California energy crisis      │
 │ [AI-generated answer text]          │
 │                                      │
 │ 📧 Sources (5 emails):              │
@@ -947,7 +947,7 @@ Streamlit caching ensures:
 │   [Click to expand]                  │
 │                                      │
 │ ▶ Subject: CA Utilities (0.81)      │
-│   ...                                │
+│                                    │
 └─────────────────────────────────────┘
 ```
 

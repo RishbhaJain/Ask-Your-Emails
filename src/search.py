@@ -23,7 +23,7 @@ class EmailSearchEngine:
         if self._initialized:
             return
 
-        print("Initializing search engine...")
+        print("Initializing search engine ")
         self.embedder = EmailEmbedder()
         self.index = EmailVectorIndex()
         self.index.load_index()
@@ -31,7 +31,7 @@ class EmailSearchEngine:
         if self.use_hybrid:
             try:
                 from hybrid_search import HybridSearchEngine
-                print("Initializing hybrid search (semantic + BM25)...")
+                print("Initializing hybrid search (semantic + BM25) ")
                 self.hybrid_engine = HybridSearchEngine(
                     self.index.emails_df,
                     self.index.embeddings,
@@ -59,19 +59,10 @@ class EmailSearchEngine:
     ) -> List[Dict]:
         """
         Search emails with optional faceted filters.
-
         Args:
             query: Search query text
             top_k: Number of results to return
             users: List of users to filter by
-            folders: List of folders to filter by
-            date_year_min: Minimum year filter
-            date_year_max: Maximum year filter
-            semantic_weight: Weight for semantic scores (hybrid mode only)
-            bm25_weight: Weight for BM25 scores (hybrid mode only)
-
-        Returns:
-            List of result dictionaries
         """
         if not self._initialized:
             self.initialize()

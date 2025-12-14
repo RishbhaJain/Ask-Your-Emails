@@ -20,7 +20,7 @@ class EmailVectorIndex:
 
     def build_index(self, emails_df, embeddings):
         """Build index from emails and embeddings"""
-        print("\nBuilding vector index...")
+        print("\nBuilding vector index ")
 
         # Store full DataFrame for hybrid search
         self.emails_df = emails_df.copy()
@@ -118,7 +118,7 @@ class EmailVectorIndex:
         with open(path, 'wb') as f:
             pickle.dump(index_data, f)
 
-        print(f"\n✓ Index saved to: {path}")
+        print(f"\n  Index saved to: {path}")
         print(f"  File size: {Path(path).stat().st_size / 1024 / 1024:.1f} MB")
 
     def load_index(self, path=None):

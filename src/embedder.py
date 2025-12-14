@@ -26,7 +26,7 @@ class EmailEmbedder:
         """Generate embeddings for a batch of texts."""
         batch_size = batch_size or 32  # Reduce from config.BATCH_SIZE to 32 for stability
 
-        print(f"Generating embeddings for {len(texts)} texts...")
+        print(f"Generating embeddings for {len(texts)} texts ")
         print(f"  Batch size: {batch_size}")
 
         embeddings = self.model.encode(
@@ -37,14 +37,14 @@ class EmailEmbedder:
             device="cpu"  # Explicitly use CPU for stability on Mac
         )
 
-        print(f"✓ Generated {len(embeddings)} embeddings")
+        print(f"  Generated {len(embeddings)} embeddings")
         print(f"  Shape: {embeddings.shape}")
 
         return embeddings
 
     def embed_emails(self, emails_df: pd.DataFrame) -> np.ndarray:
         """Generate embeddings for all emails in a DataFrame."""
-        print("\nPreparing email texts for embedding...")
+        print("\nPreparing email texts for embedding ")
 
         # Combine subject and body for richer embeddings
         texts = []
@@ -71,12 +71,12 @@ class EmailEmbedder:
     def save_embeddings(self, embeddings: np.ndarray, output_path: str):
         """Save embeddings to disk."""
         np.save(output_path, embeddings)
-        print(f"✓ Embeddings saved to: {output_path}")
+        print(f"  Embeddings saved to: {output_path}")
         print(f"  File size: {Path(output_path).stat().st_size / 1024 / 1024:.1f} MB")
 
     def load_embeddings(self, input_path: str) -> np.ndarray:
         """Load embeddings from disk."""
         embeddings = np.load(input_path)
-        print(f"✓ Loaded embeddings from: {input_path}")
+        print(f"  Loaded embeddings from: {input_path}")
         print(f"  Shape: {embeddings.shape}")
         return embeddings

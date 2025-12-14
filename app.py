@@ -67,7 +67,7 @@ def main():
     st.title("Ask Your Emails")
     st.caption("Semantic email search over 14,929 Enron emails")
 
-    with st.spinner("Loading..."):
+    with st.spinner("Loading "):
         search_engine = load_search_engine()
         rag = load_rag()
 
@@ -182,7 +182,7 @@ def render_unified_search(search_engine, rag):
         if not query:
             st.warning("Please enter a search query.")
         else:
-            with st.spinner("Searching..."):
+            with st.spinner("Searching "):
                 results = search_engine.search(
                     query=query,
                     top_k=top_k,
@@ -204,7 +204,7 @@ def render_unified_search(search_engine, rag):
         if results:
             # Generate AI answer if requested
             if rag and use_qa:
-                with st.spinner("Generating answer..."):
+                with st.spinner("Generating answer "):
                     response = rag.answer_question(
                         st.session_state.get('search_query', ''),
                         results,

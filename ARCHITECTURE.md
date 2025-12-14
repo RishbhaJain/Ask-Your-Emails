@@ -1,8 +1,8 @@
-# The Inbox Conductor - Technical Architecture
+# Ask Your Emails - Technical Architecture
 
 ## System Overview
 
-The Inbox Conductor is a semantic email search system with RAG-based question answering capabilities, built for the INFO 202 final project. The system processes 14,929 Enron emails and enables semantic search with faceted navigation and AI-powered Q&A.
+Ask Your Emails is a semantic email search system with RAG-based question answering capabilities, built for the INFO 202 final project. The system processes 14,929 Enron emails and enables semantic search with faceted navigation and AI-powered Q&A.
 
 ### High-Level Architecture
 
@@ -1242,7 +1242,7 @@ streamlit run app.py
 
 ## Summary
 
-The Inbox Conductor is a production-quality semantic email search system demonstrating:
+Ask Your Emails is a production-quality semantic email search system demonstrating:
 
 1. **Data Engineering**: Stratified sampling, email parsing, metadata extraction
 2. **Semantic Search**: 384-dim embeddings, cosine similarity, faceted filtering

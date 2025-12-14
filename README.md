@@ -1,4 +1,4 @@
-# The Inbox Conductor
+# Ask Your Emails
 
 **Semantic Email Search with Faceted Navigation** - INFO 202 Final Project
 

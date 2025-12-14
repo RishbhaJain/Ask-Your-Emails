@@ -1,5 +1,5 @@
 """
-The Inbox Conductor - Streamlit Web Application
+Ask Your Emails - Streamlit Web Application
 
 Semantic email search with faceted navigation.
 INFO 202 Final Project
@@ -17,7 +17,7 @@ import config
 
 # Page config
 st.set_page_config(
-    page_title="The Inbox Conductor",
+    page_title="Ask Your Emails",
     page_icon="📧",
     layout="wide"
 )
@@ -40,7 +40,7 @@ def load_rag():
 
 
 def main():
-    st.title("📧 The Inbox Conductor")
+    st.title("📧 Ask Your Emails")
     st.caption("Semantic email search over 14,929 Enron emails")
 
     with st.spinner("Loading..."):

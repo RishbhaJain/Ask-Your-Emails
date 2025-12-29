@@ -1,3 +1,6 @@
+![App Screenshot 1](Screenshot%202025-12-28%20at%2010.32.50%E2%80%AFPM.png)
+![App Screenshot 2](Screenshot%202025-12-28%20at%2010.33.48%E2%80%AFPM.png)
+
 # Ask Your Emails
 
 **Semantic Email Search with Faceted Navigation** - INFO 202 Final Project

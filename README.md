@@ -1,158 +1,107 @@
-![App Screenshot 1](Screenshot%202025-12-28%20at%2010.32.50%E2%80%AFPM.png)
-![App Screenshot 2](Screenshot%202025-12-28%20at%2010.33.48%E2%80%AFPM.png)
-
 # Ask Your Emails
 
-**Semantic Email Search with Faceted Navigation** - INFO 202 Final Project
+A Streamlit application for hybrid search and retrieval-augmented question
+answering over **14,929 Enron emails**. It combines sentence-transformer
+embeddings, BM25, faceted metadata filters, and Claude-generated answers with
+the retrieved emails shown as evidence.
 
-A web-based semantic retrieval system for personal email archives that combines RAG (Retrieval-Augmented Generation) with faceted metadata filtering. Built using the Enron QA dataset.
+![Search results with faceted filters](Screenshot%202025-12-28%20at%2010.32.50%E2%80%AFPM.png)
+![RAG answer with retrieved sources](Screenshot%202025-12-28%20at%2010.33.48%E2%80%AFPM.png)
+
+## System at a glance
+
+```mermaid
+flowchart LR
+    A["Enron emails"] --> B["Parse and normalize"]
+    B --> C["MiniLM embeddings"]
+    B --> D["BM25 index"]
+    C --> E["Hybrid retrieval"]
+    D --> E
+    E --> F["Faceted Streamlit UI"]
+    E --> G["Claude RAG answer"]
+```
+
+## What I built
+
+- a data pipeline that parses the Enron archive and builds a 14,929-email subset
+- semantic retrieval with `all-MiniLM-L6-v2` embeddings and a persisted vector index
+- optional BM25 plus semantic-score fusion for hybrid retrieval
+- sender, recipient, and year filters in a unified Streamlit interface
+- grounded answer generation that exposes the retrieved source emails
 
 ## Features
 
-- **Semantic Search**: Solve the vocabulary problem with embeddings
-- **Faceted Navigation**: Filter emails by sender, folder, and date
-- **RAG Q&A**: Ask questions and get AI-synthesized answers with source citations
-- **RAG Evaluation**: Test system performance with ground truth Q&A pairs, using Claude as a judge for answer quality
+- **Hybrid retrieval:** semantic similarity and BM25 reduce vocabulary mismatch.
+- **Faceted navigation:** narrow results by sender, recipient, and year.
+- **RAG answers:** optionally synthesize a concise answer from the highest-ranked
+  emails while retaining the sources for inspection.
+- **Reproducible local index:** checked-in embeddings and index artifacts make the
+  current demo loadable without rebuilding the corpus.
 
-## Tech Stack
-
-- **Vector DB**: ChromaDB for semantic search
-- **Embeddings**: sentence-transformers (all-MiniLM-L6-v2)
-- **LLM**: Claude 3.5 Haiku via Anthropic API
-- **UI**: Streamlit
-- **Dataset**: Enron QA (15k emails, 500 Q&A pairs)
-
-## Setup Instructions
-
-### 1. Clone and Navigate
+## Setup
 
 ```bash
-cd /Users/rishbhajain/Documents/202
-```
+git clone https://github.com/RishbhaJain/Ask-Your-Emails.git
+cd Ask-Your-Emails
 
-### 2. Create Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure API Key
-
-Create a `.env` file in the project root:
-
-```bash
-ANTHROPIC_API_KEY=your_api_key_here
-```
-
-Or for Streamlit deployment, create `.streamlit/secrets.toml`:
-
-```toml
-ANTHROPIC_API_KEY = "your_api_key_here"
-```
-
-### 5. Prepare Data (Run Once)
-
-```bash
-python scripts/01_prepare_data.py
-```
-
-This downloads the Enron dataset, parses emails, and creates a 15k subset.
-
-### 6. Build Index (Run Once)
-
-```bash
-python scripts/02_build_index.py
-```
-
-This generates embeddings and builds the ChromaDB vector database (~25 min on CPU).
-
-### 7. Run the App
-
-```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+cp .env.example .env
 streamlit run app.py
 ```
 
-The app will open at `http://localhost:8501`
+Set `ANTHROPIC_API_KEY` in `.env` to enable generated answers. Search remains
+available without it.
 
-## Project Structure
-
-```
-202/
-├── data/
-│   ├── processed/           # Parsed emails and Q&A pairs
-│   └── chroma_db/          # Vector database
-├── src/
-│   ├── config.py           # Centralized settings
-│   ├── data_loader.py      # Dataset loading
-│   ├── email_parser.py     # Email parsing logic
-│   ├── embedder.py         # Embedding generation
-│   ├── indexer.py          # ChromaDB indexing
-│   ├── search.py           # Search logic
-│   ├── rag.py              # RAG implementation
-│   └── evaluator.py        # Evaluation metrics
-├── scripts/
-│   ├── 01_prepare_data.py  # Data preparation
-│   ├── 02_build_index.py   # Index building
-│   └── 03_evaluate.py      # Evaluation metrics
-├── app.py                  # Main Streamlit app
-└── requirements.txt
-```
-
-## Usage
-
-### Basic Search
-
-1. Enter a natural language query in the search box
-2. Use faceted filters to narrow results by sender, folder, or date
-3. View relevance scores (cosine similarity) for each result
-
-### RAG Q&A
-
-1. Switch to the "Q&A" tab
-2. Enter a question in natural language
-3. The system retrieves relevant emails and generates an answer
-4. View source emails with relevance scores
-
-### Evaluation
-
-Navigate to the "Evaluation" tab to test RAG performance:
-- **Retrieval Metrics**: Recall@K, MRR, Precision@1 on ground truth Q&A pairs
-- **Answer Quality**: Claude-as-Judge scoring (0-10) comparing RAG answers to ground truth
-- **Interactive**: Adjust sample sizes and view score distributions
-- **Detailed**: See top and bottom scoring answers with explanations
-
-## INFO 202 Concepts Demonstrated
-
-- **Week 4-5**: Faceted navigation and controlled vocabulary
-- **Week 7-8**: Vocabulary problem, semantic similarity, word embeddings
-- **Week 10**: Information seeking and foraging
-- **Week 13**: RAG techniques, search evaluation (Precision@K, MRR)
-- **Week 15**: Bias discussion (Enron dataset limitations)
-
-## Development
-
-To run evaluation metrics:
+To rebuild the checked-in data and index:
 
 ```bash
-python scripts/03_evaluate.py
+python scripts/01_prepare_data.py
+python scripts/02_build_index.py
 ```
 
-## Deployment
+## Evaluation snapshot
 
-To deploy to Streamlit Cloud:
+The repository includes a historical 50-question diagnostic at
+`data/processed/eval_results_50.json`:
 
-1. Push to GitHub (ChromaDB directory included, ~50MB)
-2. Connect repository to Streamlit Cloud
-3. Add `ANTHROPIC_API_KEY` in Streamlit Cloud secrets
-4. Deploy!
+| Metric | Value |
+|---|---:|
+| Recall@10 | 0.58 |
+| Precision@1 | 0.44 |
+| MRR | 0.488 |
+| Key-term match rate | 0.48 |
+| Retrieval failure rate | 0.42 |
 
-## License
+These numbers are a baseline, not a production claim. The script that generated
+the historical artifact is not currently included, so the result is presented as
+diagnostic evidence rather than a reproducible CI benchmark. A next step is to add
+a versioned question set and evaluator before claiming metric improvements.
 
-Educational project for INFO 202 - UC Berkeley School of Information
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| `app.py` | Unified Streamlit search and RAG interface |
+| `src/data_loader.py` | Dataset loading |
+| `src/email_parser.py` | Email parsing and normalization |
+| `src/embedder.py` | Sentence-transformer embeddings |
+| `src/indexer.py` | Persisted vector index |
+| `src/hybrid_search.py` | BM25 and semantic-score fusion |
+| `src/search.py` | Retrieval orchestration and facets |
+| `src/rag.py` | Claude answer generation from retrieved emails |
+| `scripts/01_prepare_data.py` | Build the processed email subset |
+| `scripts/02_build_index.py` | Generate embeddings and the local index |
+
+## Limitations
+
+- The Enron corpus is historical workplace email and does not represent a
+  contemporary personal inbox or all communication styles.
+- The checked-in evaluation is small and its original runner is not included.
+- Generated answers require an Anthropic API key and should be verified against
+  the displayed source emails.
+- The current project is an educational prototype, not a multi-tenant system with
+  authentication, access controls, or production data-governance guarantees.
+
+Built as an INFO 202 final project at the UC Berkeley School of Information.
